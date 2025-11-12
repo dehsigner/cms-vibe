@@ -126,4 +126,3 @@ export const mockTestSuites: TestSuite[] = [
     releaseId: "rel-3",
   },
 ]
-

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockReleases } from "@/lib/mock-data"
-import { ReleaseDialog } from "@/components/release-dialog"
+import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
 import type { ReleaseStatus } from "@/lib/types"
 
 const statusVariant: Record<ReleaseStatus, "default" | "secondary" | "outline" | "destructive"> = {
@@ -36,7 +36,7 @@ export default function ReleasesPage() {
             Manage and deploy releases from branches
           </p>
         </div>
-        <ReleaseDialog />
+        <CreateReleaseSheet />
       </div>
 
       {/* Releases Table */}
@@ -104,4 +104,3 @@ export default function ReleasesPage() {
     </div>
   )
 }
-

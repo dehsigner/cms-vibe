@@ -1,13 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { Package, Server, TestTube, Plus } from "lucide-react"
+import { Package, Server, TestTube } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { mockReleases, mockEnvironments, mockTestSuites } from "@/lib/mock-data"
-import { ReleaseDialog } from "@/components/release-dialog"
+import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
 
 export default function TestDeployPage() {
   const activeReleases = mockReleases.filter((r) => r.status !== "deployed").length
@@ -25,7 +25,7 @@ export default function TestDeployPage() {
             Manage releases, environments, and test suites
           </p>
         </div>
-        <ReleaseDialog />
+        <CreateReleaseSheet />
       </div>
 
       {/* Overview Cards */}
@@ -163,4 +163,3 @@ export default function TestDeployPage() {
     </div>
   )
 }
-
