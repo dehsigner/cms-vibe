@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { Package, Server, TestTube } from "lucide-react"
 
@@ -7,13 +8,38 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { mockReleases, mockEnvironments, mockTestSuites } from "@/lib/mock-data"
+import { mockDeployments } from "@/lib/mock-deployments"
 import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
+import { DeploymentDetailPanel } from "@/components/test-deploy/DeploymentDetailPanel"
+import type { Deployment, Environment, Release } from "@/lib/types"
 
 export default function TestDeployPage() {
+  const [activeDeployment, setActiveDeployment] = React.useState<{
+    deployment: Deployment
+    release: Release
+    environment: Environment
+  } | null>(null)
+
   const activeReleases = mockReleases.filter((r) => r.status !== "deployed").length
   const healthyEnvironments = mockEnvironments.filter((e) => e.status === "healthy").length
   const passedTests = mockTestSuites.filter((t) => t.status === "passed").length
   const totalTests = mockTestSuites.length
+
+  const handleViewDeployment = (releaseId: string, environmentId: string) => {
+    const deployment = mockDeployments.find(
+      (d) => d.releaseId === releaseId && d.environmentId === environmentId
+    )
+    if (!deployment) {
+      return
+    }
+
+    const release = mockReleases.find((r) => r.id === deployment.releaseId)
+    const environment = mockEnvironments.find((e) => e.id === deployment.environmentId)
+
+    if (release && environment) {
+      setActiveDeployment({ deployment, release, environment })
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -149,17 +175,44 @@ export default function TestDeployPage() {
                         ` • ${env.lastDeployedAt.toLocaleDateString()}`}
                     </p>
                   </div>
-                  <Link href={`/test-deploy/environments`}>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link href={`/test-deploy/environments`}>
+                      <Button variant="ghost" size="sm">
+                        View
+                      </Button>
+                    </Link>
+                    {env.currentRelease ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleViewDeployment(env.currentRelease!.id, env.id)
+                        }
+                      >
+                        View Deployment
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {activeDeployment && (
+        <DeploymentDetailPanel
+          open={!!activeDeployment}
+          onOpenChange={(open) => {
+            if (!open) {
+              setActiveDeployment(null)
+            }
+          }}
+          deployment={activeDeployment.deployment}
+          release={activeDeployment.release}
+          environment={activeDeployment.environment}
+        />
+      )}
     </div>
   )
 }

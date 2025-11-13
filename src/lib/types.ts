@@ -50,3 +50,24 @@ export interface TestSuite {
   releaseId?: string;
 }
 
+export type DeploymentStatus = "success" | "failed";
+
+export interface DeploymentSuiteStatus {
+  id: string;
+  name: string;
+  status: TestStatus;
+}
+
+export interface Deployment {
+  id: string;
+  releaseId: string;
+  environmentId: string;
+  deployedAt: Date;
+  actor: string;
+  status: DeploymentStatus;
+  region?: string;
+  requiredSuites: DeploymentSuiteStatus[];
+  optionalSuites?: DeploymentSuiteStatus[];
+  logs: string;
+}
+
