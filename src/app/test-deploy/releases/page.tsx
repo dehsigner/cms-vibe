@@ -87,12 +87,14 @@ export default function ReleasesPage() {
                           View
                         </Link>
                       </Button>
-                      {release.status === "ready" && (
-                        <Button variant="default" size="sm">
-                          <Rocket className="size-4 mr-1" />
-                          Deploy
-                        </Button>
-                      )}
+                      <Button
+                        variant="default"
+                        size="sm"
+                        disabled={release.status !== "ready"}
+                      >
+                        <Rocket className="size-4 mr-1" />
+                        Deploy
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
