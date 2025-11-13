@@ -16,13 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockTestSuites } from "@/lib/mock-data"
 import type { TestStatus, TestSuite } from "@/lib/types"
-
-const statusVariant: Record<TestStatus, "default" | "secondary" | "destructive" | "outline"> = {
-  passed: "default",
-  failed: "destructive",
-  pending: "outline",
-  running: "secondary",
-}
+import { getStatusToneClass } from "@/lib/utils"
 
 const typeLabel: Record<string, string> = {
   unit: "Unit",
@@ -145,7 +139,7 @@ export default function TestsPage() {
                     </TableCell>
                     <TableCell>{envLabel[suite.environment]}</TableCell>
                     <TableCell>
-                      <Badge variant={statusVariant[suite.status]}>
+                    <Badge variant="outline" className={getStatusToneClass(suite.status)}>
                         {suite.status}
                       </Badge>
                     </TableCell>

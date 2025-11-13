@@ -12,6 +12,7 @@ import { mockDeployments } from "@/lib/mock-deployments"
 import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
 import { DeploymentDetailPanel } from "@/components/test-deploy/DeploymentDetailPanel"
 import type { Deployment, Environment, Release } from "@/lib/types"
+import { getStatusToneClass } from "@/lib/utils"
 
 export default function TestDeployPage() {
   const [activeDeployment, setActiveDeployment] = React.useState<{
@@ -116,13 +117,8 @@ export default function TestDeployPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{release.name}</span>
                       <Badge
-                        variant={
-                          release.status === "deployed"
-                            ? "default"
-                            : release.status === "ready"
-                              ? "secondary"
-                              : "outline"
-                        }
+                        variant="outline"
+                        className={getStatusToneClass(release.status)}
                       >
                         {release.status}
                       </Badge>
@@ -158,13 +154,8 @@ export default function TestDeployPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{env.displayName}</span>
                       <Badge
-                        variant={
-                          env.status === "healthy"
-                            ? "default"
-                            : env.status === "degraded"
-                              ? "secondary"
-                              : "destructive"
-                        }
+                        variant="outline"
+                        className={getStatusToneClass(env.status)}
                       >
                         {env.status}
                       </Badge>

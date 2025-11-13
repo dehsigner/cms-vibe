@@ -6,12 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockEnvironments } from "@/lib/mock-data"
-
-const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-  healthy: "default",
-  degraded: "secondary",
-  down: "destructive",
-}
+import { getStatusToneClass } from "@/lib/utils"
 
 export default function EnvironmentsPage() {
   return (
@@ -31,7 +26,7 @@ export default function EnvironmentsPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>{env.displayName}</CardTitle>
-                <Badge variant={statusVariant[env.status] || "outline"}>
+                <Badge variant="outline" className={getStatusToneClass(env.status)}>
                   {env.status}
                 </Badge>
               </div>

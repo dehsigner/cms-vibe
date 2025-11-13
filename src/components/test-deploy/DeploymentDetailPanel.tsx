@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Deployment, DeploymentSuiteStatus, Environment, Release } from "@/lib/types"
+import { cn, getStatusToneClass } from "@/lib/utils"
 
 interface DeploymentDetailPanelProps {
   open: boolean
@@ -37,18 +38,7 @@ const renderSuiteList = (
           className="flex items-center justify-between rounded-md border border-border bg-muted/30 p-3"
         >
           <span className="text-sm">{suite.name}</span>
-          <Badge
-            variant={
-              suite.status === "passed"
-                ? "default"
-                : suite.status === "failed"
-                  ? "destructive"
-                  : suite.status === "running"
-                    ? "secondary"
-                    : "outline"
-            }
-            className="text-xs"
-          >
+          <Badge variant="outline" className={cn(getStatusToneClass(suite.status), "text-xs")}>
             {suite.status}
           </Badge>
         </div>
@@ -129,7 +119,10 @@ export function DeploymentDetailPanel({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Result</span>
-                <Badge variant={deployment.status === "success" ? "default" : "destructive"}>
+                <Badge
+                  variant="outline"
+                  className={getStatusToneClass(deployment.status)}
+                >
                   {deployment.status}
                 </Badge>
               </div>
