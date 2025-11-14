@@ -58,7 +58,6 @@ export function CreateReleaseSheet() {
   const [notes, setNotes] = React.useState("")
   const [autoDeploy, setAutoDeploy] = React.useState(false)
   const [selectedEnvironment, setSelectedEnvironment] = React.useState<EnvironmentName | "">("")
-  const [runTestsBeforeDeploy, setRunTestsBeforeDeploy] = React.useState(false)
   const [testsRunning, setTestsRunning] = React.useState(false)
   const [testsPassed, setTestsPassed] = React.useState(false)
 
@@ -75,18 +74,10 @@ export function CreateReleaseSheet() {
       setNotes("")
       setAutoDeploy(false)
       setSelectedEnvironment("")
-      setRunTestsBeforeDeploy(false)
       setTestsRunning(false)
       setTestsPassed(false)
     }
   }, [open])
-
-  // Auto-enable run tests when gates exist and auto-deploy is enabled
-  React.useEffect(() => {
-    if (autoDeploy && hasGates) {
-      setRunTestsBeforeDeploy(true)
-    }
-  }, [autoDeploy, hasGates])
 
   const handleRunTests = () => {
     if (!selectedBranch) return
@@ -119,7 +110,6 @@ export function CreateReleaseSheet() {
       notes,
       autoDeploy,
       environment: selectedEnvironment,
-      runTestsBeforeDeploy,
     })
 
     // Reset form and close sheet
@@ -255,57 +245,34 @@ export function CreateReleaseSheet() {
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="run-tests" className="cursor-pointer text-sm">
-                          Run required tests before deploy
-                        </Label>
-                        <p className="text-xs text-muted-foreground">
-                          Execute test gates before deployment
-                        </p>
-                      </div>
-                      <Switch
-                        id="run-tests"
-                        checked={runTestsBeforeDeploy}
-                        onCheckedChange={setRunTestsBeforeDeploy}
-                      />
+                    <div className="space-y-2 pt-2 border-t border-border">
+                      <p className="text-xs text-muted-foreground">
+                        These tests must pass before deployment can continue.
+                      </p>
+                      {testsRunning ? (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="size-4 animate-spin" />
+                          Running tests...
+                        </div>
+                      ) : testsPassed ? (
+                        <div className="flex items-center gap-2 text-sm text-green-500">
+                          <CheckCircle2 className="size-4" />
+                          All required tests passed
+                        </div>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleRunTests}
+                          disabled={!selectedBranch}
+                          className="w-full"
+                        >
+                          <Rocket className="size-4 mr-2" />
+                          Run Tests
+                        </Button>
+                      )}
                     </div>
-
-                    {runTestsBeforeDeploy && (
-                      <div className="space-y-2 pt-2 border-t border-border">
-                        {testsRunning ? (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Loader2 className="size-4 animate-spin" />
-                            Running tests...
-                          </div>
-                        ) : testsPassed ? (
-                          <div className="flex items-center gap-2 text-sm text-green-500">
-                            <CheckCircle2 className="size-4" />
-                            All tests passed
-                          </div>
-                        ) : (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleRunTests}
-                            disabled={!selectedBranch}
-                            className="w-full"
-                          >
-                            <Rocket className="size-4 mr-2" />
-                            Run Tests
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {selectedEnvironment && !hasGates && (
-                  <div className="rounded-lg border border-border bg-muted/30 p-3">
-                    <p className="text-sm text-muted-foreground">
-                      No test gates required for this environment
-                    </p>
                   </div>
                 )}
               </>

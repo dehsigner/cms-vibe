@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Package, Server, TestTube } from "lucide-react"
+import { Eye, Package, Rocket, Server, TestTube } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -129,6 +129,7 @@ export default function TestDeployPage() {
                   </div>
                   <Link href={`/test-deploy/releases`}>
                     <Button variant="ghost" size="sm">
+                      <Eye className="size-4 mr-1" />
                       View
                     </Button>
                   </Link>
@@ -169,6 +170,7 @@ export default function TestDeployPage() {
                   <div className="flex gap-2">
                     <Link href={`/test-deploy/environments`}>
                       <Button variant="ghost" size="sm">
+                        <Eye className="size-4 mr-1" />
                         View
                       </Button>
                     </Link>
@@ -180,6 +182,7 @@ export default function TestDeployPage() {
                           handleViewDeployment(env.currentRelease!.id, env.id)
                         }
                       >
+                        <Rocket className="size-4 mr-1" />
                         View Deployment
                       </Button>
                     ) : null}
