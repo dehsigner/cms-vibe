@@ -16,14 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockReleases } from "@/lib/mock-data"
 import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
-import type { ReleaseStatus } from "@/lib/types"
-
-const statusVariant: Record<ReleaseStatus, "default" | "secondary" | "outline" | "destructive"> = {
-  draft: "outline",
-  ready: "secondary",
-  deployed: "default",
-  failed: "destructive",
-}
+import { getStatusToneClass } from "@/lib/utils"
 
 export default function ReleasesPage() {
   return (
@@ -75,7 +68,7 @@ export default function ReleasesPage() {
                     })}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusVariant[release.status]}>
+                    <Badge variant="outline" className={getStatusToneClass(release.status)}>
                       {release.status}
                     </Badge>
                   </TableCell>
@@ -87,12 +80,14 @@ export default function ReleasesPage() {
                           View
                         </Link>
                       </Button>
-                      {release.status === "ready" && (
-                        <Button variant="default" size="sm">
-                          <Rocket className="size-4 mr-1" />
-                          Deploy
-                        </Button>
-                      )}
+                      <Button
+                        variant="default"
+                        size="sm"
+                        disabled={release.status !== "ready"}
+                      >
+                        <Rocket className="size-4 mr-1" />
+                        Deploy
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
