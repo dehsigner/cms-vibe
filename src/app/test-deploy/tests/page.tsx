@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockTestSuites } from "@/lib/mock-data"
 import type { TestStatus, TestSuite } from "@/lib/types"
-import { getStatusToneClass } from "@/lib/utils"
+import { getStatusToneClass, formatDate, formatTime } from "@/lib/utils"
 
 const typeLabel: Record<string, string> = {
   unit: "Unit",
@@ -157,11 +157,7 @@ export default function TestsPage() {
                     <TableCell>
                       {suite.lastRunAt ? (
                         <span className="text-sm text-muted-foreground">
-                          {suite.lastRunAt.toLocaleDateString()}{" "}
-                          {suite.lastRunAt.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {formatDate(suite.lastRunAt)} {formatTime(suite.lastRunAt)}
                         </span>
                       ) : (
                         <span className="text-sm text-muted-foreground">Never</span>

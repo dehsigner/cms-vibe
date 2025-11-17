@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import * as React from "react"
 import { Eye, Rocket } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,9 +16,15 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockReleases } from "@/lib/mock-data"
 import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
-import { getStatusToneClass } from "@/lib/utils"
+import { ReleaseDetailPanel } from "@/components/test-deploy/ReleaseDetailPanel"
+import { DeploySheet } from "@/components/test-deploy/DeploySheet"
+import { getStatusToneClass, formatDate, formatTime } from "@/lib/utils"
+import type { Release } from "@/lib/types"
 
 export default function ReleasesPage() {
+  const [activeRelease, setActiveRelease] = React.useState<Release | null>(null)
+  const [activeDeployRelease, setActiveDeployRelease] = React.useState<Release | null>(null)
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -61,11 +67,7 @@ export default function ReleasesPage() {
                     {release.commit.substring(0, 7)}
                   </TableCell>
                   <TableCell>
-                    {release.createdAt.toLocaleDateString()}{" "}
-                    {release.createdAt.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDate(release.createdAt)} {formatTime(release.createdAt)}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={getStatusToneClass(release.status)}>
@@ -74,16 +76,19 @@ export default function ReleasesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/test-deploy/releases/${release.id}`}>
-                          <Eye className="size-4 mr-1" />
-                          View
-                        </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveRelease(release)}
+                      >
+                        <Eye className="size-4 mr-1" />
+                        View
                       </Button>
                       <Button
                         variant="default"
                         size="sm"
                         disabled={release.status !== "ready"}
+                        onClick={() => setActiveDeployRelease(release)}
                       >
                         <Rocket className="size-4 mr-1" />
                         Deploy
@@ -96,6 +101,30 @@ export default function ReleasesPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {activeRelease && (
+        <ReleaseDetailPanel
+          open={!!activeRelease}
+          onOpenChange={(open) => {
+            if (!open) {
+              setActiveRelease(null)
+            }
+          }}
+          release={activeRelease}
+        />
+      )}
+
+      {activeDeployRelease && (
+        <DeploySheet
+          open={!!activeDeployRelease}
+          onOpenChange={(open) => {
+            if (!open) {
+              setActiveDeployRelease(null)
+            }
+          }}
+          release={activeDeployRelease}
+        />
+      )}
     </div>
   )
 }

@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Deployment, DeploymentSuiteStatus, Environment, Release } from "@/lib/types"
-import { cn, getStatusToneClass } from "@/lib/utils"
+import { cn, getStatusToneClass, formatDate, formatTime } from "@/lib/utils"
 
 interface DeploymentDetailPanelProps {
   open: boolean
@@ -105,12 +105,7 @@ export function DeploymentDetailPanel({
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Deployed At</span>
                 <span>
-                  {deployment.deployedAt.toLocaleDateString()}{" "}
-                  {deployment.deployedAt.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
+                  {formatDate(deployment.deployedAt)} {formatTime(deployment.deployedAt, true)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
