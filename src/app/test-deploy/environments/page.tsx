@@ -1,14 +1,19 @@
 "use client"
 
+import * as React from "react"
 import { Rocket, Clock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockEnvironments } from "@/lib/mock-data"
-import { getStatusToneClass } from "@/lib/utils"
+import { DeploySheet } from "@/components/test-deploy/DeploySheet"
+import { getStatusToneClass, formatDate, formatTime } from "@/lib/utils"
+import type { EnvironmentName } from "@/lib/types"
 
 export default function EnvironmentsPage() {
+  const [activeDeployEnvironment, setActiveDeployEnvironment] = React.useState<EnvironmentName | null>(null)
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -52,16 +57,16 @@ export default function EnvironmentsPage() {
                   <div className="text-sm text-muted-foreground">Last Deployed</div>
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="size-4" />
-                    {env.lastDeployedAt.toLocaleDateString()}{" "}
-                    {env.lastDeployedAt.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDate(env.lastDeployedAt)} {formatTime(env.lastDeployedAt)}
                   </div>
                 </div>
               )}
 
-              <Button className="w-full" variant="default">
+              <Button
+                className="w-full"
+                variant="default"
+                onClick={() => setActiveDeployEnvironment(env.name)}
+              >
                 <Rocket className="size-4 mr-2" />
                 Deploy Release
               </Button>
@@ -69,6 +74,19 @@ export default function EnvironmentsPage() {
           </Card>
         ))}
       </div>
+
+      {activeDeployEnvironment && (
+        <DeploySheet
+          open={!!activeDeployEnvironment}
+          onOpenChange={(open) => {
+            if (!open) {
+              setActiveDeployEnvironment(null)
+            }
+          }}
+          release={null}
+          preselectedEnvironment={activeDeployEnvironment}
+        />
+      )}
     </div>
   )
 }

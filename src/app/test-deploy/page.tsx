@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { Eye, Package, Rocket, Server, TestTube } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -11,8 +10,9 @@ import { mockReleases, mockEnvironments, mockTestSuites } from "@/lib/mock-data"
 import { mockDeployments } from "@/lib/mock-deployments"
 import { CreateReleaseSheet } from "@/components/test-deploy/CreateReleaseSheet"
 import { DeploymentDetailPanel } from "@/components/test-deploy/DeploymentDetailPanel"
+import { ReleaseDetailPanel } from "@/components/test-deploy/ReleaseDetailPanel"
 import type { Deployment, Environment, Release } from "@/lib/types"
-import { getStatusToneClass } from "@/lib/utils"
+import { getStatusToneClass, formatDate } from "@/lib/utils"
 
 export default function TestDeployPage() {
   const [activeDeployment, setActiveDeployment] = React.useState<{
@@ -20,6 +20,7 @@ export default function TestDeployPage() {
     release: Release
     environment: Environment
   } | null>(null)
+  const [activeRelease, setActiveRelease] = React.useState<Release | null>(null)
 
   const activeReleases = mockReleases.filter((r) => r.status !== "deployed").length
   const healthyEnvironments = mockEnvironments.filter((e) => e.status === "healthy").length
@@ -127,12 +128,14 @@ export default function TestDeployPage() {
                       {release.branch} • {release.commitMessage}
                     </p>
                   </div>
-                  <Link href={`/test-deploy/releases`}>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="size-4 mr-1" />
-                      View
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveRelease(release)}
+                  >
+                    <Eye className="size-4 mr-1" />
+                    View
+                  </Button>
                 </div>
               ))}
             </div>
@@ -163,30 +166,21 @@ export default function TestDeployPage() {
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {env.currentRelease?.name || "No deployment"}
-                      {env.lastDeployedAt &&
-                        ` • ${env.lastDeployedAt.toLocaleDateString()}`}
+                      {env.lastDeployedAt && ` • ${formatDate(env.lastDeployedAt)}`}
                     </p>
                   </div>
-                  <div className="flex gap-2">
-                    <Link href={`/test-deploy/environments`}>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="size-4 mr-1" />
-                        View
-                      </Button>
-                    </Link>
-                    {env.currentRelease ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          handleViewDeployment(env.currentRelease!.id, env.id)
-                        }
-                      >
-                        <Rocket className="size-4 mr-1" />
-                        View Deployment
-                      </Button>
-                    ) : null}
-                  </div>
+                  {env.currentRelease ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        handleViewDeployment(env.currentRelease!.id, env.id)
+                      }
+                    >
+                      <Rocket className="size-4 mr-1" />
+                      View Deployment
+                    </Button>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -205,6 +199,18 @@ export default function TestDeployPage() {
           deployment={activeDeployment.deployment}
           release={activeDeployment.release}
           environment={activeDeployment.environment}
+        />
+      )}
+
+      {activeRelease && (
+        <ReleaseDetailPanel
+          open={!!activeRelease}
+          onOpenChange={(open) => {
+            if (!open) {
+              setActiveRelease(null)
+            }
+          }}
+          release={activeRelease}
         />
       )}
     </div>
